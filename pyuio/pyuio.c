@@ -40,7 +40,7 @@ static PyObject *process_write(PyObject *self, PyObject *args) {
         return NULL;
     }
 
-    local[0].iov_base = data;
+    local[0].iov_base = buffer;
     local[0].iov_len = size;
 
     remote[0].iov_base = (void *) address;
@@ -58,12 +58,12 @@ static PyMethodDef PyuioMethods[] = {
 
 static struct PyModuleDef pyuiomodule = {
     PyModuleDef_HEAD_INIT,
-    "pyuio",
-    "Python Linux Userspace IO interface",
-    -
+    "pyuiolib",
+    "Python Linux Userspace IO interface library",
+    -1,
     PyuioMethods
 };
 
 PyMODINIT_FUNC PyInit_pyuio(void) {
-    return PyModule_Create(&fputsmodule);
+    return PyModule_Create(&pyuiomodule);
 }
