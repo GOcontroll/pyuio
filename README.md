@@ -1,6 +1,8 @@
 # pyuio
 A package to expose the Linux Userspace IO to python. Currently implements process_vm_readv and process_vm_writev from sys/uio.h.
 
+Currently broken due to stack smashing detection,something goes wrong with passing the buffer to the c functions
+
 ## installing
 
 Download the source from the github page and run: 

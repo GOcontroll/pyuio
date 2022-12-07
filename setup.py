@@ -15,7 +15,7 @@ setup(
 	long_description=long_description,
 	long_description_content_type="text/markdown",
 	packages=["pyuio"],
-	ext_modules=[Extension("pyuiolib", ["pyuio/pyuio.c"])],
+	ext_modules=[Extension("pyuiolib", ["pyuio/pyuiolib.c"])],
 	install_requires=[],
 	classifiers=[
 		"Development Status :: 4 - Beta",

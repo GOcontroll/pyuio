@@ -23,7 +23,7 @@ class asap_element:
     size_t =  0
     dataType = 0
 
-    def __init__(self, address:int, dataType: int, arraySize:int = 1) -> None:
+    def __init__(self, address:int, dataType: int, arraySize:int = 1):
         self.address = address
         self.dataType = dataType
         self.size_element = asap_datatypes.dataSizes[dataType]
@@ -101,6 +101,7 @@ def process_write(pid: int, asap_ele: asap_element, data):
 def process_read(pid: int, asap_ele: asap_element):
     array = [0]*asap_ele.size_t
     array = (ctypes.c_uint8 * asap_ele.size_t)(*array)
+    print("calling _process_read")
     res = _process_read(pid, asap_ele.address, array, asap_ele.size_t)
     if res < 0:
         if res == -errno.EFAULT:
@@ -114,5 +115,5 @@ def process_read(pid: int, asap_ele: asap_element):
         elif res == -errno.ESRCH:
             raise Exception(f"No process exists with the pid {pid}.")
         else:
-            raise Exception("An exception occured of an unknown type, memory write likely failed.")
+            raise Exception("An exception occured of an unknown type, memory read likely failed.")
     return convert_to_value(array, asap_ele.size_element, asap_ele.dataType)
