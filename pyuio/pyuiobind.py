@@ -39,16 +39,16 @@ def convert_to_bytes(data, dataSize, dataType):
         data = [data]
     if dataType == asap_datatypes.int8:
         for unit in data:
-            array += int.to_bytes(unit&0xff, dataSize, 'little')
+            array += pack("b", unit)
     elif dataType == asap_datatypes.int16:
         for unit in data:
-            array += int.to_bytes(unit&0xffff, dataSize, 'little')
+            array += pack("h", unit)
     elif dataType == asap_datatypes.int32:
         for unit in data:
-            array += int.to_bytes(unit&0xffffffff, dataSize, 'little')
+            array += pack("i", unit)
     elif dataType == asap_datatypes.int64:
         for unit in data:
-            array += int.to_bytes(unit&0xffffffffffffffff, dataSize, 'little')
+            array += pack("q", unit)
     elif dataType == asap_datatypes.single:
         for unit in data:
             array += pack("f", unit)
@@ -68,10 +68,10 @@ def convert_to_value(data, dataSize, dataType):
             array.append(int.from_bytes(bytearray(unit), 'little', signed=True))
     elif dataType == asap_datatypes.single:
         for unit in dataBlocks:
-            array.append(unpack("f", bytearray(unit)))
+            array.append(unpack("f", bytearray(unit))[0])
     elif dataType == asap_datatypes.double:
         for unit in dataBlocks:
-            array.append(unpack("d", bytearray(unit)))
+            array.append(unpack("d", bytearray(unit))[0])
     else:
         for unit in dataBlocks:
             array.append(int.from_bytes(bytearray(unit), 'little', signed=False))
@@ -83,7 +83,7 @@ def convert_to_value(data, dataSize, dataType):
 def process_write(pid: int, asap_ele: asap_element, data):
     array = convert_to_bytes(data, asap_ele.size_element, asap_ele.dataType)
     array = (ctypes.c_uint8 * asap_ele.size_t)(*array)
-    res = _process_write(pid, asap_ele.address, array, asap_ele.size_t)
+    res = _process_write(pid, asap_ele.address, ctypes.addressof(array), asap_ele.size_t) #not terribly happy with how I'm passing this buffer if someone is reading this and knows a better way, please let me know.
     if res < 0:
         if res == -errno.EFAULT:
             raise Exception("The address or the buffer are not in an accessible memory location.")
@@ -101,8 +101,7 @@ def process_write(pid: int, asap_ele: asap_element, data):
 def process_read(pid: int, asap_ele: asap_element):
     array = [0]*asap_ele.size_t
     array = (ctypes.c_uint8 * asap_ele.size_t)(*array)
-    print("calling _process_read")
-    res = _process_read(pid, asap_ele.address, array, asap_ele.size_t)
+    res = _process_read(pid, asap_ele.address, ctypes.addressof(array), asap_ele.size_t)
     if res < 0:
         if res == -errno.EFAULT:
             raise Exception("The address or the buffer are not in an accessible memory location.")
