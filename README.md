@@ -14,8 +14,9 @@ pip3 install pyuio
 
 ## usage
 
-There are two functions process_read and process write, read takes two parameters (pid, asap_element) and write takes three (pid, asap_element, data).\
-asap_element is a class contained in the module that takes 3 parameters to initialize (address, dataType, arraySize).\
+There are two functions process_read and process write, read takes two required parameters (pid, asap_element) and one optional return_bytes=True/False which defaults to False \
+and write takes three (pid, asap_element, data).\
+asap_element is a class contained in the module that takes 2 required parameters to initialize (address, dataType) and one optional arraySize:int which defaults to 1.\
 The different kinds of datatypes are in the asap_datatypes class.
 
 A very simple implementation would look like this:

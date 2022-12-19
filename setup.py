@@ -6,7 +6,7 @@ long_description = (root / "README.md").read_text()
 
 setup(
 	name="pyuio",
-	version="0.0.3",
+	version="0.0.4",
 	description="A package to expose the Linux Userspace IO to python",
 	url="https://github.com/GOcontroll/pyuio",
 	author="Maud Spierings",
@@ -18,7 +18,7 @@ setup(
 	ext_modules=[Extension("pyuiolib", ["pyuio/pyuiolib.c"])],
 	install_requires=[],
 	classifiers=[
-		"Development Status :: 4 - Beta",
+		"Development Status :: 5 - Production/Stable",
 		"Intended Audience :: Developers",
 		"License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
 		"Operating System :: POSIX :: Linux",

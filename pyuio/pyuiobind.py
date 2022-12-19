@@ -98,10 +98,10 @@ def process_write(pid: int, asap_ele: asap_element, data):
         else:
             raise Exception("An exception occured of an unknown type, memory write likely failed.")
 
-def process_read(pid: int, asap_ele: asap_element):
+def process_read(pid: int, asap_ele: asap_element, return_bytes:bool=False):
     array = [0]*asap_ele.size_t
     array = (ctypes.c_uint8 * asap_ele.size_t)(*array)
-    res = _process_read(pid, asap_ele.address, ctypes.addressof(array), asap_ele.size_t)
+    res = _process_read(pid, asap_ele.address, ctypes.addressof(array), asap_ele.size_t) #not terribly happy with how I'm passing this buffer if someone is reading this and knows a better way, please let me know.
     if res < 0:
         if res == -errno.EFAULT:
             raise Exception("The address or the buffer are not in an accessible memory location.")
@@ -115,4 +115,6 @@ def process_read(pid: int, asap_ele: asap_element):
             raise Exception(f"No process exists with the pid {pid}.")
         else:
             raise Exception("An exception occured of an unknown type, memory read likely failed.")
+    if return_bytes:
+        return bytes(array)
     return convert_to_value(array, asap_ele.size_element, asap_ele.dataType)
