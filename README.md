@@ -53,4 +53,16 @@ process_write(pid, asap_dutycycle, new_dutycycle)
 
 To read and write arrays of data just set the arraySize to the desired size and then feed the process_write an array. or receive an array from the process_read function.
 
+These functions are also available as methods of the asap_element class so:
+
+```
+dutycycle = asap_dutycycle.process_read(pid)
+```
+and
+```
+asap_dutycycle.process_write(pid, new_dutycycle)
+```
+
+is also valid.
+
 Matrices are an idea for future expansion. These could be usefull for modifying 2d lookup tables for example.

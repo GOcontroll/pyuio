@@ -1,4 +1,7 @@
-# 0.0.5
+# 0.0.6
+
+## 0.0.6
+added process_read and process_write as methods of the asap_element class
 
 ## 0.0.5
 added documentation and improved exceptions

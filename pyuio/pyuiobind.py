@@ -80,6 +80,84 @@ class asap_element:
         self.size_element = asap_datatypes.dataSizes[dataType]
         self.size_t = self.size_element*arraySize
 
+    def process_read(self, pid: int, return_bytes:bool=False) -> Union[bytes, int, float, list[int], list[float]]:
+        """
+        Read data from the memory of a running process.\\
+        Returns bytes, an integer, a float or a list of integers or floats
+
+        Parameters
+        ----------
+        pid : int
+            The process id that you wish to write to
+        return_bytes : bool, optional
+            Return the value as the raw bytes instead of the converted value.
+
+        Raises
+        ------
+        ReferenceError
+            The memory address is outside the caller's or the investigated process accessible address space.
+        PermessionError
+            The caller does not have permission to access the address space of the given pid.
+            Generally also gets raised when the given pid is killed and one still tries to access it.
+        ProcessLookupError
+            No process with the given pid exists.
+        Exception
+            Other errno that are not accounted for, see the man page for process_vm_readv/writev.
+        """
+        array = [0]*self.size_t
+        array = (ctypes.c_uint8 * self.size_t)(*array)
+        res = _process_read(pid, self.address, ctypes.addressof(array), self.size_t) #not terribly happy with how I'm passing this buffer if someone is reading this and knows a better way, please let me know.
+        if res < 0:
+            if res == -errno.EFAULT:
+                raise ReferenceError("The address is not in an accessible memory location to either this process or the process that is being written to.")
+            elif res == -errno.EPERM:
+                raise PermissionError("Insufficient permissions to access process memory space.")
+            elif res == -errno.ESRCH:
+                raise ProcessLookupError(f"No process exists with the pid {pid}.")
+            else:
+                raise Exception(f"An exception occured of an unknown type, memory read likely failed. errno: -{res}")
+        if return_bytes:
+            return bytes(array)
+        return convert_to_value(array, self.size_element, self.dataType)
+
+    def process_write(self, pid: int, data: Union[int, float, list[int], list[float]]):
+        """
+        Write data into the memory of a running process.
+
+        Parameters
+        ----------
+        pid : int
+            The process id that you wish to write to
+        data : int, float, list(int), list(float)
+            The information that needs to be written into the process
+
+        Raises
+        ------
+        ReferenceError
+            The memory address is outside the caller's or the investigated process accessible address space.
+        PermessionError
+            The caller does not have permission to access the address space of the given pid.
+            Generally also gets raised when the pid is killed and one still tries to access it.
+        ProcessLookupError
+            No process with the given pid exists.
+        Exception
+            Other errno that are not accounted for, see the man page for process_vm_readv/writev.
+        """
+        array = convert_to_bytes(data, self.size_element, self.dataType)
+        array = (ctypes.c_uint8 * self.size_t)(*array)
+        res = _process_write(pid, self.address, ctypes.addressof(array), self.size_t) #not terribly happy with how I'm passing this buffer if someone is reading this and knows a better way, please let me know.
+        if res < 0:
+            if res == -errno.EFAULT:
+                raise ReferenceError("The address is not in an accessible memory location to either this process or the process that is being written to.")
+            elif res == -errno.EPERM:
+                raise PermissionError("Insufficient permissions to access process memory space.")
+            elif res == -errno.ESRCH:
+                raise ProcessLookupError(f"No process exists with the pid {pid}.")
+            else:
+                raise Exception(f"An exception occured of an unknown type, memory write likely failed. errno: -{res}")
+
+        
+
 def chunks(lst : list, n : int) -> Iterable:
     """
     Not really part of the module, for internal use.\\
