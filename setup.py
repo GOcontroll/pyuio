@@ -6,7 +6,7 @@ long_description = (root / "README.md").read_text()
 
 setup(
 	name="pyuio",
-	version="0.0.6",
+	version="0.1.0",
 	description="A package to expose the Linux Userspace IO to python",
 	url="https://github.com/GOcontroll/pyuio",
 	author="Maud Spierings",
