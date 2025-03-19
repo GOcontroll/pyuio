@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+.pybuild/
 
 # C extensions
 *.so
@@ -129,3 +130,7 @@ dmypy.json
 .pyre/
 .vscode/
 todo
+
+debian/.debhelper/
+debian/python3-pyuio/
+

@@ -1,0 +1,29 @@
+Source: pyuio
+Section: misc
+Priority: optional
+Maintainer: Maud Spierings <maudspierings@gocontroll.com>
+Rules-Requires-Root: no
+Build-Depends:
+ debhelper-compat (= 13),
+ dh-sequence-python3,
+ python3-setuptools,
+ python3-all,
+ python3-dev,
+Standards-Version: 4.6.2
+Homepage: https://gocontroll.com
+Vcs-Browser: https://github.com/GOcontroll/pyuio
+Vcs-Git: https://github.com/GOcontroll/pyuio.git
+
+Package: python3-pyuio
+Architecture: any
+Multi-Arch: foreign
+Depends:
+ ${python3:Depends},
+ ${misc:Depends},
+Description: A package to expose the Linux Userspace IO to python
+ package to expose the Linux Userspace IO to python.
+ Currently implements process_vm_readv and process_vm_writev from sys/uio.h.
+ https://man7.org/linux/man-pages/man2/process_vm_readv.2.html
+ .
+ This package installs the library for Python 3.
+
